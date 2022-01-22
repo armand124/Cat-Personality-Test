@@ -4,4 +4,9 @@ Personality Test that tells you what cat personality you are based off some ques
 The game has different characters from Bingus to Boingus to Floppa. Every cat has it's unqiue
 personality and you'll find your soul mate..in a cat.
 
+Tech used : 
+
+Gui made with Python - Pygame
+For calculating the data - C++
+
 (I made this for my girlfriend)
