@@ -3,9 +3,9 @@ from stat import FILE_ATTRIBUTE_SPARSE_FILE
 from tokenize import _all_string_prefixes
 import pygame as picture
 import sys
+import random
 import time as wait
 from pygame_functions import *
-from playsound import playsound
 from pygame import mixer
 defaultWidth = 500
 defaultHeight = 800
@@ -15,14 +15,36 @@ def GuiInit():
     picture.display.set_icon(icon)
     picture.display.init()
 GuiInit()
+
+finalQuestions = []
+
 mixer.music.load('music.mp3')
 mixer.music.play()
 screen = picture.display.set_mode((defaultWidth , defaultHeight))
 last_update = picture.time.get_ticks()
 #Gui basic initialization -> Going to update
-
+questionsFloppa = ["You think you're better than everyone" , "You like showing off",
+                   "You're usually the leader of the group" , "You'd throw a party right now"]
+questionsBingus = ['You like to be in the center of attention' , "You're very sensitive to physical contact",
+                    "You would do anything in your power to end the world","Everybody likes you"]
 mainFont = 'orange juice 2.0.ttf'
 #Needs to put this in class -> Font init
+def makeQuestions():
+    floppa1 = random.randint(0,3)
+    floppa2 = random.randint(0,3)
+    while floppa1==floppa2:
+        floppa2= random.randint(0,3)
+    global finalQuestions
+    finalQuestions.append(questionsFloppa[floppa1])
+    finalQuestions.append(questionsFloppa[floppa2])
+    bingus1 = random.randint(0 , 3)
+    bingus2 = random.randint(0  , 3)
+    while bingus1==bingus2:
+        bingus2=random.randint(0,3)
+    finalQuestions.append(questionsBingus[bingus1])
+    finalQuestions.append(questionsBingus[bingus2])
+    random.shuffle(finalQuestions)
+  
 font = picture.font.Font(mainFont, 100)
 font_for_second = picture.font.Font(mainFont , 70)
 font_for_small = picture.font.Font(mainFont , 30)
@@ -35,8 +57,8 @@ pressSkip = picture.image.load("pressedSkip.png").convert_alpha()
 extSecond = font_for_second.render("Test", True , (255 , 255 , 255))
 buttonPressed = picture.image.load("buttonPressed.png").convert_alpha()
 buttonUnPressed = picture.image.load("buttonUnpressed.png").convert_alpha()
-submitPressed = picture.image.load("submitPressed.png").convert_alpha()
-submitUnPressed = picture.image.load("submitUnPressed.png").convert_alpha()
+submitPressed = picture.image.load("buttonPressed.png").convert_alpha()
+submitUnPressed = picture.image.load("buttonUnpressed.png").convert_alpha()
 mes0 =font_for_small.render("0" , True , (255 , 255 , 255))
 mes5 =font_for_small.render("5" , True , (255 , 255 , 255))
 #Function to update the screen with all it's assets
@@ -166,6 +188,9 @@ def ScreenUpdate(case):
         else:
             goBackButton = Button(400 , 0 , notPressSkip)
         goBackButton.showButton()
+        questionsFont = picture.font.Font(mainFont , 40)
+        question = questionsFont.render(finalQuestions[case-3], True , (255 , 255 , 255))
+        screen.blit(question,(30 , 150))
         screen.blit(mes0,(37 ,483))
         screen.blit(mes5 , (439 , 483))
         submit.showButton()
@@ -176,7 +201,7 @@ def ScreenUpdate(case):
         bt5.showButton()
     picture.display.update()
 
-                  
+  
 class Button():
     def __init__(self , x , y , image):
         self.image = image
@@ -213,9 +238,11 @@ bt5 = Button(430 , 450 , buttonUnPressed)
 
 case = 1
 running = True
-while running:
+while case<6:
     ScreenUpdate(case)
-    if submit.buttonPressed():
+    if submit.buttonPressed() and pressed:
+        case = case + 1
+        print(case)
         picture.time.wait(200)
         pressed = False
         h1 = False
@@ -224,13 +251,20 @@ while running:
         h4 = False
         h5 = False
         if goBackButton.buttonPressed():
-         picture.time.wait(200)
-         case = 1 
-    if second_start_button.buttonPressed() :
+          picture.time.wait(200)
+          case = 1 
+    if case==1 and second_start_button.buttonPressed() :
+        makeQuestions()
         picture.time.wait(200)
         case = 2
     if goBackButton.buttonPressed():
         picture.time.wait(200)
+        h1 = False
+        h2 = False
+        h3 = False
+        h4 = False
+        h5 = False
+        pressed = False
         case = 1    
     for event in picture.event.get():
         if event.type == picture.QUIT:
